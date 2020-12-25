@@ -3,11 +3,38 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client'; 
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+  cache: new InMemoryCache()
+}); 
+
+client.query({
+    query: gql`
+      query {
+        launch(flight_number: 1) {
+          flight_number
+          mission_name
+          launch_year
+          launch_date_local
+          launch_sucess
+          rocket {
+            rocket_id
+            rocket_name
+            rocket_type
+          }
+        }
+      }
+    `
+  })
+  .then(result => console.log(result));
 
 ReactDOM.render(
-  <React.StrictMode>
+  <ApolloProvider client={client}>
     <App />
-  </React.StrictMode>,
+  </ApolloProvider>,
   document.getElementById('root')
 );
 
