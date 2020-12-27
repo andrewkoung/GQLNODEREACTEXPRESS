@@ -6,8 +6,21 @@ const {
     GraphQLString, 
     GraphQLBoolean, 
     GraphQLList, 
-    GraphQLSchema 
+    GraphQLSchema,
+    GraphQLEnumType
 }= require('graphql');
+
+const SpecificRocket = new GraphQLEnumType({
+    name: 'Rockets',
+    values: {
+        FALCON1: {
+            value: 'falcon1'
+        },
+        FALCONHEAVY: {
+            value: 'falcon_heavy'
+        }
+    }
+})
 
 const LaunchType = new GraphQLObjectType({
     name: 'Launch',
@@ -51,6 +64,17 @@ const RootQuery = new GraphQLObjectType({
                     res.data
                 );
             } 
+        },
+        rocket: {
+            type: RocketType, 
+            args: {
+                rocket_id: { type: SpecificRocket }
+            },
+            resolve(parent, args) {
+                return axios.get(`https://api.spacexdata.com/v3/rockets/${args.rocket_id}`).then(res =>
+                    res.data
+                );
+            }
         }
     }
 })
